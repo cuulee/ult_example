@@ -1,0 +1,2981 @@
+
+<html>
+<head>
+<meta charset=utf-8 />
+<title>PipeLeaflet</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+ <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+ <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.15.0/mapbox-gl.js"></script>
+
+
+ <div id="map"></div>
+
+
+<style> #map {
+  position: relative;
+  width: auto;
+  height: 650px;
+  overflow:visible;
+}
+</style>
+
+<style>
+  body { margin:0; padding:0; }
+</style>
+<style> #map {
+  position: relative;
+  width: auto;
+  height: 650px;
+  overflow:visible;
+}
+</style>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-size: cover;
+  height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: #06D85F;
+  margin: 10px 0;
+}
+
+.box {
+  width: 40%;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 10px/10px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.button {
+  font-size: 1em;
+  padding: 10px;
+  color: #fff;
+  border: 2px solid #06D85F;
+  border-radius: 10px/10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.button:hover {
+  background: #06D85F;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.mapboxgl-popup {
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 40%;
+  position: relative;
+}
+
+.mapboxgl-popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.mapboxgl-popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.mapboxgl-popup .close:hover {
+  color: #06D85F;
+}
+.mapboxgl-popup .content {
+  max-height: 70%;
+  overflow: auto;
+}
+
+</style>
+
+
+<script>
+
+
+mapboxgl.accessToken = 'pk.eyJ1IjoicnNiYXVtYW5uIiwiYSI6IjdiOWEzZGIyMGNkOGY3NWQ4ZTBhN2Y5ZGU2Mzg2NDY2In0.jycgv7qwF8MMIWt4cT0RaQ';
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/mapbox/dark-v8', //stylesheet location
+    center: [-76.9640042355, 38.9199792817], // starting position
+    zoom: 10 // starting zoom 
+});
+
+function wrap0(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_0.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src0',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src0',
+                'type': 'circle',
+                'source': 'src0',
+                'source-layer': 'sf20100',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0030E5'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src0'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap1(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_1.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src1',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src1',
+                'type': 'circle',
+                'source': 'src1',
+                'source-layer': 'sf20101',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0042E4'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src1'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap2(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_2.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src2',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src2',
+                'type': 'circle',
+                'source': 'src2',
+                'source-layer': 'sf20102',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0053E4'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src2'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap3(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_3.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src3',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src3',
+                'type': 'circle',
+                'source': 'src3',
+                'source-layer': 'sf20103',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0064E4'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src3'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap4(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_4.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src4',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src4',
+                'type': 'circle',
+                'source': 'src4',
+                'source-layer': 'sf20104',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0075E4'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src4'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap5(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_5.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src5',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src5',
+                'type': 'circle',
+                'source': 'src5',
+                'source-layer': 'sf20105',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0186E4'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src5'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap6(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_6.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src6',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src6',
+                'type': 'circle',
+                'source': 'src6',
+                'source-layer': 'sf20106',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#0198E3'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src6'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap7(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_7.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src7',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src7',
+                'type': 'circle',
+                'source': 'src7',
+                'source-layer': 'sf20107',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#01A8E3'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src7'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap8(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_8.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src8',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src8',
+                'type': 'circle',
+                'source': 'src8',
+                'source-layer': 'sf20108',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#01B9E3'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src8'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap9(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_9.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src9',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src9',
+                'type': 'circle',
+                'source': 'src9',
+                'source-layer': 'sf20109',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#01CAE3'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src9'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap10(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_10.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src10',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src10',
+                'type': 'circle',
+                'source': 'src10',
+                'source-layer': 'sf201010',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#02DBE3'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src10'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap11(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_11.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src11',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src11',
+                'type': 'circle',
+                'source': 'src11',
+                'source-layer': 'sf201011',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#02E2A6'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src11'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap12(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_12.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src12',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src12',
+                'type': 'circle',
+                'source': 'src12',
+                'source-layer': 'sf201012',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#02E2B7'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src12'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap13(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_13.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src13',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src13',
+                'type': 'circle',
+                'source': 'src13',
+                'source-layer': 'sf201013',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#02E2C8'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src13'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap14(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_14.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src14',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src14',
+                'type': 'circle',
+                'source': 'src14',
+                'source-layer': 'sf201014',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#02E2D9'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src14'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap15(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_15.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src15',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src15',
+                'type': 'circle',
+                'source': 'src15',
+                'source-layer': 'sf201015',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#03E152'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src15'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap16(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_16.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src16',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src16',
+                'type': 'circle',
+                'source': 'src16',
+                'source-layer': 'sf201016',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#03E163'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src16'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap17(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_17.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src17',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src17',
+                'type': 'circle',
+                'source': 'src17',
+                'source-layer': 'sf201017',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#03E174'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src17'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap18(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_18.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src18',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src18',
+                'type': 'circle',
+                'source': 'src18',
+                'source-layer': 'sf201018',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#03E184'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src18'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap19(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_19.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src19',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src19',
+                'type': 'circle',
+                'source': 'src19',
+                'source-layer': 'sf201019',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#03E295'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src19'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap20(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_20.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src20',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src20',
+                'type': 'circle',
+                'source': 'src20',
+                'source-layer': 'sf201020',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#04E010'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src20'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap21(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_21.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src21',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src21',
+                'type': 'circle',
+                'source': 'src21',
+                'source-layer': 'sf201021',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#04E021'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src21'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap22(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_22.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src22',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src22',
+                'type': 'circle',
+                'source': 'src22',
+                'source-layer': 'sf201022',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#04E031'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src22'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap23(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_23.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src23',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src23',
+                'type': 'circle',
+                'source': 'src23',
+                'source-layer': 'sf201023',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#04E142'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src23'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap24(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_24.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src24',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src24',
+                'type': 'circle',
+                'source': 'src24',
+                'source-layer': 'sf201024',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#09E004'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src24'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap25(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_25.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src25',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src25',
+                'type': 'circle',
+                'source': 'src25',
+                'source-layer': 'sf201025',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#2ADF05'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src25'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap26(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_26.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src26',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src26',
+                'type': 'circle',
+                'source': 'src26',
+                'source-layer': 'sf201026',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#3BDF05'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src26'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap27(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_27.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src27',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src27',
+                'type': 'circle',
+                'source': 'src27',
+                'source-layer': 'sf201027',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#4BDF05'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src27'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap28(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_28.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src28',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src28',
+                'type': 'circle',
+                'source': 'src28',
+                'source-layer': 'sf201028',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#5BDF05'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src28'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap29(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_29.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src29',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src29',
+                'type': 'circle',
+                'source': 'src29',
+                'source-layer': 'sf201029',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#6CDF06'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src29'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap30(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_30.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src30',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src30',
+                'type': 'circle',
+                'source': 'src30',
+                'source-layer': 'sf201030',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#7CDE06'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src30'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap31(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_31.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src31',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src31',
+                'type': 'circle',
+                'source': 'src31',
+                'source-layer': 'sf201031',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#8CDE06'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src31'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap32(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_32.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src32',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src32',
+                'type': 'circle',
+                'source': 'src32',
+                'source-layer': 'sf201032',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#9DDE06'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src32'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap33(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_33.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src33',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src33',
+                'type': 'circle',
+                'source': 'src33',
+                'source-layer': 'sf201033',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#ADDE06'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src33'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap34(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_34.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src34',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src34',
+                'type': 'circle',
+                'source': 'src34',
+                'source-layer': 'sf201034',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#BDDE07'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src34'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap35(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_35.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src35',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src35',
+                'type': 'circle',
+                'source': 'src35',
+                'source-layer': 'sf201035',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#CDDD07'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src35'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap36(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_36.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src36',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src36',
+                'type': 'circle',
+                'source': 'src36',
+                'source-layer': 'sf201036',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DB0F0A'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src36'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap37(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_37.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src37',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src37',
+                'type': 'circle',
+                'source': 'src37',
+                'source-layer': 'sf201037',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DB2E09'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src37'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap38(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_38.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src38',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src38',
+                'type': 'circle',
+                'source': 'src38',
+                'source-layer': 'sf201038',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DB3D09'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src38'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap39(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_39.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src39',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src39',
+                'type': 'circle',
+                'source': 'src39',
+                'source-layer': 'sf201039',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DB4D09'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src39'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap40(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_40.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src40',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src40',
+                'type': 'circle',
+                'source': 'src40',
+                'source-layer': 'sf201040',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DB5D09'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src40'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap41(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_41.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src41',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src41',
+                'type': 'circle',
+                'source': 'src41',
+                'source-layer': 'sf201041',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DC6D08'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src41'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap42(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_42.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src42',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src42',
+                'type': 'circle',
+                'source': 'src42',
+                'source-layer': 'sf201042',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DC7D08'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src42'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap43(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_43.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src43',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src43',
+                'type': 'circle',
+                'source': 'src43',
+                'source-layer': 'sf201043',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DC8D08'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src43'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap44(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_44.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src44',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src44',
+                'type': 'circle',
+                'source': 'src44',
+                'source-layer': 'sf201044',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DC9D08'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src44'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap45(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_45.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src45',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src45',
+                'type': 'circle',
+                'source': 'src45',
+                'source-layer': 'sf201045',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DCAD08'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src45'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap46(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_46.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src46',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src46',
+                'type': 'circle',
+                'source': 'src46',
+                'source-layer': 'sf201046',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DDBD07'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src46'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap47(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_47.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src47',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src47',
+                'type': 'circle',
+                'source': 'src47',
+                'source-layer': 'sf201047',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DDCD07'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src47'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+
+function wrap48(map) {
+    map.on('load', function () {
+        $.getJSON('http://localhost:8000/basefile1_48.geojson',function(data1) { addDataToMap0(data1); });
+         function addDataToMap0(data1) {
+
+            // Mapbox GL JS Api - import segment
+            var segment_src = map.addSource('src48',{
+                type:'geojson',
+                data:data1,
+                maxzoom:14
+            });
+            map.addLayer({
+                'id': 'src48',
+                'type': 'circle',
+                'source': 'src48',
+                'source-layer': 'sf201048',
+                'paint': {
+                    // make circles larger as the user zooms from z12 to z22
+                    'circle-radius': {
+                        'base': 4,
+                        'stops': [[12, 2], [22, 180]]
+                    },
+                    // color circles by ethnicity, using data-driven styles
+                    'circle-color': '#DDDD07'
+                    }
+                }
+            );
+          }});
+	
+  // Create a popup, but don't add it to the map yet.
+  var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+  });
+
+  map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: ['src48'] });
+      // Change the cursor style as a UI indicator.
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+
+      if (!features.length) {
+          popup.remove();
+          return;
+      }
+
+      var feature = features[0];
+
+      // Populate the popup and set its coordinates
+      // based on the feature found.
+                  var popupText = "<table><tr><th>LAT: </th><td>" + feature.properties['LAT']+"</td></tr>";             var popupText = popupText+ "<tr><th>LONG: </th><td>" + feature.properties['LONG']+"</td></tr>";             var popupText = popupText+ "<tr><th>GEOHASH: </th><td>" + feature.properties['GEOHASH']+"</td></tr>";             var popupText = popupText+ "<tr><th>AREA: </th><td>" + feature.properties['AREA']+"</td></tr>";             var popupText = popupText+ "<tr><th>COLORKEY: </th><td>" + feature.properties['COLORKEY']+"</td></tr>"; 
+      popup.setLngLat(feature.geometry.coordinates)
+          .setHTML(popupText)
+          .addTo(map);
+      });
+}
+	
+function add(map) {
+	wrap0(map);
+	wrap1(map);
+	wrap2(map);
+	wrap3(map);
+	wrap4(map);
+	wrap5(map);
+	wrap6(map);
+	wrap7(map);
+	wrap8(map);
+	wrap9(map);
+	wrap10(map);
+	wrap11(map);
+	wrap12(map);
+	wrap13(map);
+	wrap14(map);
+	wrap15(map);
+	wrap16(map);
+	wrap17(map);
+	wrap18(map);
+	wrap19(map);
+	wrap20(map);
+	wrap21(map);
+	wrap22(map);
+	wrap23(map);
+	wrap24(map);
+	wrap25(map);
+	wrap26(map);
+	wrap27(map);
+	wrap28(map);
+	wrap29(map);
+	wrap30(map);
+	wrap31(map);
+	wrap32(map);
+	wrap33(map);
+	wrap34(map);
+	wrap35(map);
+	wrap36(map);
+	wrap37(map);
+	wrap38(map);
+	wrap39(map);
+	wrap40(map);
+	wrap41(map);
+	wrap42(map);
+	wrap43(map);
+	wrap44(map);
+	wrap45(map);
+	wrap46(map);
+	wrap47(map);
+	wrap48(map);
+
+}
+
+
+
+add(map);
+</script>
